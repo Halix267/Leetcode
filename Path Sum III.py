@@ -63,19 +63,40 @@ class Solution:
 #         self.right = right
 class Solution:
     def pathSum(self, root: TreeNode, sum: int) -> int:
-        mp = collections.defaultdict(int)
-        mp[0] = 1
-        return self.helper(root, mp, 0, sum)
-    
-    
-    def helper(self, root, mp, rsum, target):
-        if root is None:
-            return 0
-        rsum += root.val
-        calc = rsum - target
-        total = mp[calc]
-        mp[rsum] += 1
-        total += self.helper(root.left, mp, rsum, target)
-        total += self.helper(root.right, mp, rsum, target)
-        mp[rsum] -= 1
-        return total
+        """
+        Time complexity: O(n)
+        Space: O(n)
+        
+        """
+        count = 0
+        k = sum
+        diff_map = defaultdict(int)
+        def pre_order(node: 'TreeNode', curr_sum) -> None:
+            nonlocal count
+            if not node:
+                return
+            # current prefix sum
+            curr_sum += node.val
+            
+            # here is the sum we are looking for
+            if curr_sum == k:
+                count +=1
+            
+            # number of times the curr_sum − k has occurred already, 
+            # determines the number of times a path with sum k 
+            # has occurred up to the current node
+            count += diff_map[curr_sum-k]
+            
+            diff_map[curr_sum] +=1
+             # process left subtree
+            pre_order(node.left, curr_sum)
+            # process right subtree
+            pre_order(node.right, curr_sum)
+            
+            # remove the current sum from the hashmap
+            # in order not to use it during 
+            # the parallel subtree processing
+            diff_map[curr_sum] -= 1
+            
+        pre_order(root, 0)
+        return count
