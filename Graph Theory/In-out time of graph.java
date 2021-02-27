@@ -17,3 +17,6 @@ boolean dfs(int v){
   Out[v] = timer++;
   
 }
+
+
+// In and out time help in fiinding articulation poimt of a graph
